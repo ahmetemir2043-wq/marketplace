@@ -66,15 +66,20 @@ export const TopBarContent = (props: { links: TabItemConfig[]; activeLink: strin
     }
   }, [tabBar.current]);
 
-  useEffect(() => {
-    contextHandler();
-    return () => {
-      const topBarContent = document.querySelector(".main-topBar-topbarContentWrapper");
-      if (topBarContent && tabBar.current && topBarContent.contains(tabBar.current)) {
-        tabBar.current.remove();
-      }
-    };
-  });
+useEffect(() => {
+  const node = tabBar.current;
+  const topBarContent = document.querySelector(".main-topBar-topbarContentWrapper");
+
+  if (topBarContent && node) {
+    topBarContent.appendChild(node);
+  }
+
+  return () => {
+    if (topBarContent && node && topBarContent.contains(node)) {
+      node.remove();
+    }
+  };
+}, []);
 
   return <TabBar ref={tabBar} links={props.links} activeLink={props.activeLink} switchCallback={props.switchCallback} />;
 };
@@ -106,14 +111,7 @@ const TabBar = React.forwardRef(({ links, activeLink, switchCallback }: TabBarPr
     };
   }, [tabBarRef.current]);
 
-  useEffect(() => {
-    if (!tabBarRef.current) return;
 
-    const children = Array.from(tabBarRef.current.children);
-    const tabbarItemSizes = children.map((child) => child.clientWidth);
-
-    setChildrenSizes(tabbarItemSizes);
-  }, [links]);
 
   useEffect(() => {
     if (!tabBarRef.current) return;
